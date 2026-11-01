@@ -1,0 +1,22 @@
+﻿@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Something went wrong";
+}
+
+<h1>Something went wrong</h1>
+
+<p>We couldn’t complete your request. Please try again later.</p>
+
+<a asp-controller="Sightings"
+   asp-action="Form"
+   class="btn btn-primary">
+    Back to report a sighting
+</a>
+
+@if (Model.ShowRequestId)
+{
+    <p class="mt-3 text-muted">
+        Reference: <code>@Model.RequestId</code>
+    </p>
+}

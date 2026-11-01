@@ -1,0 +1,557 @@
+﻿@{
+    ViewData["Title"] = "Sighting Information";
+}
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<h1>Sighting Information</h1>
+
+<p>
+    Explore reported tick sightings across the UK.
+    Map locations represent approximate city centres.
+</p>
+
+<div class="sightings-filters chart-filters">
+    <div>
+        <label for="speciesFilter" class="form-label">Species</label>
+        <select id="speciesFilter" class="form-select">
+            <option value="">All species</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="startDateFilter" class="form-label">From</label>
+        <input id="startDateFilter" type="date" class="form-control" />
+    </div>
+
+    <div>
+        <label for="endDateFilter" class="form-label">To</label>
+        <input id="endDateFilter" type="date" class="form-control" />
+    </div>
+
+    <div class="d-flex align-items-end">
+        <button id="resetFilters" type="button" class="btn btn-primary">
+            Reset filters
+        </button>
+    </div>
+</div>
+
+<div class="sightings-layout">
+    <div id="sightingsMap" aria-label="Map of reported tick sightings"></div>
+
+    <aside class="sighting-panel" aria-labelledby="detailsTitle">
+        <h2 id="detailsTitle">Sighting details</h2>
+        <p>Select a city marker to explore its reported sightings.</p>
+    </aside>
+</div>
+
+<section class="about-section">
+    <h2>Activity over time</h2>
+    <p>Select a city on the map to view its monthly reported sightings.</p>
+    <div id="sightingsTimeline"></div>
+</section>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            const map = L.map("sightingsMap").setView([54.5, -3], 6);
+
+            L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19
+                }
+            ).addTo(map);
+
+            const coordinates = {
+                Birmingham: [52.4862, -1.8904],
+                Bristol: [51.4545, -2.5879],
+                Cardiff: [51.4816, -3.1791],
+                Edinburgh: [55.9533, -3.1883],
+                Glasgow: [55.8642, -4.2518],
+                Leeds: [53.8008, -1.5491],
+                Leicester: [52.6369, -1.1398],
+                Liverpool: [53.4084, -2.9916],
+                London: [51.5074, -0.1278],
+                Manchester: [53.4808, -2.2426],
+                Newcastle: [54.9783, -1.6178],
+                Nottingham: [52.9548, -1.1581],
+                Sheffield: [53.3811, -1.4701],
+                Southampton: [50.9097, -1.4044]
+            };
+
+            const panel = document.querySelector(".sighting-panel");
+            const status = document.createElement("p");
+            status.setAttribute("role", "status");
+            status.textContent = "Loading sightings…";
+
+            document.querySelector(".sightings-layout").before(status);
+
+            const markerLayer = L.layerGroup().addTo(map);
+            const speciesFilter = document.getElementById("speciesFilter");
+            const startFilter = document.getElementById("startDateFilter");
+            const endFilter = document.getElementById("endDateFilter");
+
+            const requestedReport = new URLSearchParams(window.location.search)
+                .get("report");
+
+            let allSightings = [];
+            let selectedCity = null;
+            let selectedReportId = requestedReport;
+
+            let timelineRequest = 0;
+
+            async function showTimeline(city, reports) {
+                const container = document.getElementById("sightingsTimeline");
+                const request = ++timelineRequest;
+
+                container.textContent = "Loading activity…";
+
+                const parameters = new URLSearchParams({ city: city });
+
+                if (speciesFilter.value) {
+                    parameters.set("species", speciesFilter.value);
+                }
+
+                if (startFilter.value) {
+                    parameters.set("from", startFilter.value);
+                }
+
+                if (endFilter.value) {
+                    parameters.set("to", endFilter.value);
+                }
+
+                try {
+                    const response = await fetch(
+                        '@Url.Action("Insights", "Sightings")' + "?" + parameters
+                    );
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || "Unable to load activity.");
+                    }
+
+                    if (request !== timelineRequest || selectedCity !== city) {
+                        return;
+                    }
+
+                    container.replaceChildren();
+
+                    const totals = new Map(
+                        result.monthly.map(item => [item.month, item.count])
+                    );
+
+                    const recordedMonths = [...totals.keys()].sort();
+
+                    if (recordedMonths.length === 0) {
+                        container.textContent = "No sightings match this selection.";
+                        return;
+                    }
+
+                    const heading = document.createElement("h3");
+                    heading.textContent = city + " — monthly reported sightings";
+
+                    const explanation = document.createElement("p");
+                    explanation.textContent =
+                        "Includes available API records and community reports. " +
+                        "Zero reports does not mean no ticks were present.";
+
+                    const scroll = document.createElement("div");
+                    scroll.className = "timeline-scroll";
+                    scroll.tabIndex = 0;
+                    scroll.setAttribute("role", "region");
+                    scroll.setAttribute("aria-label", "Monthly sightings for " + city);
+
+                    const table = document.createElement("table");
+                    table.className = "activity-chart";
+
+                    const caption = document.createElement("caption");
+                    caption.textContent = "Monthly totals in chronological order";
+
+                    const body = document.createElement("tbody");
+                    const maximum = Math.max(...totals.values(), 1);
+
+                    const first = recordedMonths[0].split("-").map(Number);
+                    const last = recordedMonths[recordedMonths.length - 1]
+                        .split("-").map(Number);
+
+                    const current = new Date(Date.UTC(first[0], first[1] - 1, 1));
+                    const end = new Date(Date.UTC(last[0], last[1] - 1, 1));
+
+                    while (current <= end) {
+                        const key = current.toISOString().slice(0, 7);
+                        const count = totals.get(key) || 0;
+
+                        const row = document.createElement("tr");
+
+                        const label = document.createElement("th");
+                        label.scope = "row";
+                        label.textContent = current.toLocaleDateString("en-GB", {
+                            month: "short",
+                            year: "numeric",
+                            timeZone: "UTC"
+                        });
+
+                        const barCell = document.createElement("td");
+
+                        const track = document.createElement("div");
+                        track.className = "activity-track";
+                        track.setAttribute("aria-hidden", "true");
+
+                        const bar = document.createElement("div");
+                        bar.className = "activity-bar";
+                        bar.style.width = (count / maximum * 100) + "%";
+
+                        const total = document.createElement("td");
+                        total.textContent = count;
+
+                        track.appendChild(bar);
+                        barCell.appendChild(track);
+                        row.append(label, barCell, total);
+                        body.appendChild(row);
+
+                        current.setUTCMonth(current.getUTCMonth() + 1);
+                    }
+
+                    table.append(caption, body);
+                    scroll.appendChild(table);
+                    container.append(heading, explanation, scroll);
+
+                    if (result.warnings?.length) {
+                        const warning = document.createElement("p");
+                        warning.textContent = result.warnings.join(" ");
+                        container.appendChild(warning);
+                    }
+                }
+                catch (error) {
+                    if (request === timelineRequest) {
+                        container.textContent = error.message;
+                    }
+                }
+            }
+
+            function showCity(city, reports) {
+                selectedCity = city;
+                showTimeline(city, reports);
+                panel.replaceChildren();
+
+                const heading = document.createElement("h2");
+                heading.id = "detailsTitle";
+                heading.textContent = city;
+
+                const summary = document.createElement("p");
+                summary.textContent =
+                    reports.length + " reported sightings. Select one below.";
+
+                const label = document.createElement("label");
+                label.htmlFor = "selectedSighting";
+                label.className = "form-label";
+                label.textContent = "Sighting";
+
+                const select = document.createElement("select");
+                select.id = "selectedSighting";
+                select.className = "form-select mb-3";
+
+                const details = document.createElement("div");
+
+                reports.forEach(function (report) {
+                    const option = new Option(
+                        report.date.slice(0, 10) + " — " + report.species,
+                        report.id
+                    );
+
+                    select.add(option);
+                });
+                if (reports.some(report => report.id === selectedReportId)) {
+                    select.value = selectedReportId;
+                }
+
+                function showReport() {
+                    const report = reports.find(
+                        item => item.id === select.value
+                    );
+
+                    details.replaceChildren();
+
+                    const fields = {
+                        "City": report.location,
+                        "Date": report.date.slice(0, 10),
+                        "Species": report.species,
+                        "Latin name": report.latinName,
+                        "Source": report.source || "Elanco educational API"
+                    };
+
+                    const list = document.createElement("dl");
+
+                    Object.entries(fields).forEach(function ([name, value]) {
+                        const term = document.createElement("dt");
+                        term.textContent = name;
+
+                        const description = document.createElement("dd");
+                        description.textContent = value || "Not provided";
+
+                        list.append(term, description);
+                    });
+
+                    const note = document.createElement("p");
+                    note.className = "text-muted";
+                    note.textContent =
+                        "The marker represents the city centre, not the exact sighting location.";
+
+                    const directions = document.createElement("a");
+                    directions.className = "btn btn-primary";
+                    directions.textContent = "Directions to city";
+                    directions.href =
+                        "https://www.google.com/maps/dir/?api=1&destination=" +
+                        encodeURIComponent(city + ", UK");
+                    directions.target = "_blank";
+                    directions.rel = "noopener noreferrer";
+
+                    details.appendChild(list);
+
+                    if (report.description) {
+                        const description = document.createElement("p");
+                        description.textContent = report.description;
+                        details.appendChild(description);
+                    }
+
+                    if (report.imagePath) {
+                        const image = document.createElement("img");
+                        image.src = report.imagePath;
+                        image.alt = "Photo submitted with this tick sighting";
+                        image.className = "species-image mb-3";
+                        image.loading = "lazy";
+
+                        details.appendChild(image);
+                    }
+
+                    const share = document.createElement("button");
+                    share.type = "button";
+                    share.className = "btn btn-outline-primary";
+                    share.textContent = "Share";
+
+                    const shareStatus = document.createElement("p");
+                    shareStatus.className = "mt-2";
+                    shareStatus.setAttribute("role", "status");
+
+                    share.addEventListener("click", async function () {
+                        const url = new URL(window.location.href);
+                        url.search = "";
+                        url.hash = "";
+                        url.searchParams.set("report", report.id);
+
+                        const shareData = {
+                            title: "Tick sighting in " + report.location,
+                            text: report.species + " — " + report.date.slice(0, 10),
+                            url: url.href
+                        };
+
+                        try {
+                            if (navigator.share) {
+                                await navigator.share(shareData);
+                            }
+                            else if (navigator.clipboard && window.isSecureContext) {
+                                await navigator.clipboard.writeText(url.href);
+                                shareStatus.textContent = "Link copied.";
+                            }
+                            else {
+                                showCopyLink(url.href);
+                            }
+                        }
+                        catch (error) {
+                            if (error.name !== "AbortError") {
+                                showCopyLink(url.href);
+                            }
+                        }
+                    });
+
+                    function showCopyLink(url) {
+                        const label = document.createElement("label");
+                        label.textContent = "Copy this link:";
+                        label.className = "d-block";
+
+                        const input = document.createElement("input");
+                        input.type = "text";
+                        input.value = url;
+                        input.readOnly = true;
+                        input.className = "form-control";
+
+                        label.appendChild(input);
+                        shareStatus.replaceChildren(label);
+                        input.focus();
+                        input.select();
+                    }
+
+                    const actions = document.createElement("div");
+                    actions.className = "d-flex flex-wrap gap-2";
+                    actions.append(directions, share);
+
+                    details.append(note, actions, shareStatus);
+                    selectedReportId = report.id;
+                }
+
+                select.addEventListener("change", showReport);
+                panel.append(heading, summary, label, select, details);
+
+                showReport();
+            }
+
+            function renderMap() {
+                if (startFilter.value && endFilter.value &&
+                    startFilter.value > endFilter.value) {
+                    status.textContent =
+                        "Choose an end date on or after the start date. " +
+                        "The previous results remain displayed.";
+                    return;
+                }
+
+                markerLayer.clearLayers();
+
+                const filtered = allSightings.filter(function (report) {
+                    const date = report.date.slice(0, 10);
+
+                    return (!speciesFilter.value ||
+                        report.species === speciesFilter.value)
+                        && (!startFilter.value || date >= startFilter.value)
+                        && (!endFilter.value || date <= endFilter.value);
+                });
+
+                const groups = new Map();
+                let unmapped = 0;
+
+                filtered.forEach(function (report) {
+                    if (!Object.hasOwn(coordinates, report.location)) {
+                        unmapped++;
+                        return;
+                    }
+
+                    if (!groups.has(report.location)) {
+                        groups.set(report.location, []);
+                    }
+
+                    groups.get(report.location).push(report);
+                });
+
+                const now = new Date();
+                const cutoff = new Date(now);
+                cutoff.setDate(cutoff.getDate() - 30);
+
+                groups.forEach(function (reports, city) {
+                    reports.sort((a, b) => b.date.localeCompare(a.date));
+
+                    const recent = reports.some(function (report) {
+                        const date = new Date(report.date);
+                        return date >= cutoff && date <= now;
+                    });
+
+                    const marker = L.circleMarker(coordinates[city], {
+                        radius: 11,
+                        color: "#1769aa",
+                        weight: 2,
+                        fillColor: recent ? "#42a5f5" : "#ffffff",
+                        fillOpacity: 1
+                    }).addTo(markerLayer);
+
+                    marker.bindTooltip(city + ": " + reports.length + " sightings");
+
+                    marker.on("click", function () {
+                        showCity(city, reports);
+                    });
+                });
+
+                if (selectedCity && groups.has(selectedCity)) {
+                    showCity(selectedCity, groups.get(selectedCity));
+                }
+                else {
+                    timelineRequest++;
+                    panel.replaceChildren();
+
+                    const heading = document.createElement("h2");
+                    heading.id = "detailsTitle";
+                    heading.textContent = "Sighting details";
+
+                    const message = document.createElement("p");
+                    message.textContent = groups.size
+                        ? "Select a city marker to explore the matching sightings."
+                        : "No mapped sightings match these filters.";
+
+                    panel.append(heading, message);
+
+                    document.getElementById("sightingsTimeline").textContent =
+                        "Select a city on the map to view its monthly reported sightings.";
+                }
+
+                status.textContent =
+                    (filtered.length - unmapped) + " matching sightings across " +
+                    groups.size + " cities. " +
+                    "Blue: includes a report from the last 30 days. " +
+                    "White: older reports only." +
+                    (unmapped
+                        ? " " + unmapped + " reports have unsupported locations and are not mapped."
+                        : "");
+            }
+
+            try {
+                const response = await fetch(
+                    '@Url.Action("Data", "Sightings")'
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || "Unable to load sightings.");
+                }
+
+                const sightings = result.sightings;
+
+                if (!Array.isArray(sightings)) {
+                    throw new Error("The server returned an unexpected response.");
+                }
+
+                allSightings = sightings.map(report => ({
+                    ...report,
+                    id: String(report.id),
+                    location: report.location.trim()
+                }));
+
+                const species = [...new Set(
+                    allSightings.map(report => report.species).filter(Boolean)
+                )].sort();
+
+                species.forEach(function (name) {
+                    speciesFilter.add(new Option(name, name));
+                });
+
+                const sharedReport = allSightings.find(
+                    report => report.id === requestedReport
+                );
+
+                if (sharedReport) {
+                    selectedCity = sharedReport.location;
+                }
+
+                speciesFilter.addEventListener("change", renderMap);
+                startFilter.addEventListener("change", renderMap);
+                endFilter.addEventListener("change", renderMap);
+
+                document.getElementById("resetFilters")
+                    .addEventListener("click", function () {
+                        speciesFilter.value = "";
+                        startFilter.value = "";
+                        endFilter.value = "";
+                        renderMap();
+                    });
+
+                renderMap();
+
+            }
+            catch (error) {
+                status.textContent = error.message;
+            }
+        });
+    </script>
+}

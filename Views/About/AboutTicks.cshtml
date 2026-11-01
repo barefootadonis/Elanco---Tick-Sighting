@@ -1,0 +1,390 @@
+﻿@{
+    ViewData["Title"] = "About Ticks";
+}
+
+<div class="about-ticks">
+    <h1>About Ticks</h1>
+
+    <p>
+        Ticks are small relatives of spiders that feed on the blood
+        of animals, including people. They attach when a person or
+        animal brushes past vegetation, they do not jump or fly.
+        They can be found in woodland, grassland, parks and gardens.
+    </p>
+
+    <nav class="about-links" aria-label="On this page">
+        <a href="#tick-species">Tick species</a>
+        <a href="#bite-prevention">Tick bite prevention</a>
+        <a href="#seasonal-activity">Seasonal tick activity</a>
+    </nav>
+
+    <section id="tick-species" class="about-section">
+        <h2>Tick species</h2>
+
+        <p>
+            The UK is home to several tick species.
+            Some examples are described below.
+        </p>
+
+        <article class="species-entry">
+            <h3>Sheep or deer tick</h3>
+            <p class="species-latin"><em>Ixodes ricinus</em></p>
+            <p>
+                The UK's most widespread tick species. It feeds on wild
+                animals, domestic animals and people, and can transmit
+                the bacteria responsible for Lyme disease.
+            </p>
+            <img src="~/images/ticks/ixodes-ricinus.jpg"
+                 alt="Sheep or deer tick (Ixodes ricinus)"
+                 class="species-image"
+                 loading="lazy" />
+            <p></p>
+        </article>
+
+        <article class="species-entry">
+            <h3>Hedgehog tick</h3>
+            <p class="species-latin"><em>Ixodes hexagonus</em></p>
+            <p>
+                Commonly associated with hedgehogs. It also feeds on
+                companion animals and can bite people.
+            </p>
+            <img src="~/images/ticks/ixodes-hexagonus.jpg"
+                 alt="Hedgehog tick (Ixodes hexagonus)"
+                 class="species-image"
+                 loading="lazy" />
+            <p></p>
+        </article>
+
+        <article class="species-entry">
+            <h3>Fox or badger tick</h3>
+            <p class="species-latin"><em>Ixodes canisuga</em></p>
+            <p>
+                Found widely across the UK, this species commonly
+                feeds on foxes, badgers and domestic dogs.
+            </p>
+            <img src="~/images/ticks/ixodes-canisuga.jpg"
+                 alt="Fox or badger tick (Ixodes canisuga)"
+                 class="species-image"
+                 loading="lazy" />
+            <p></p>
+        </article>
+
+        <article class="species-entry">
+            <h3>Ornate cow tick</h3>
+            <p class="species-latin"><em>Dermacentor reticulatus</em></p>
+            <p>
+                Mainly recorded in Wales and south-west England,
+                with an established population also reported in Essex.
+                Its patterned back is a distinctive feature.
+            </p>
+            <img src="~/images/ticks/dermacentor-reticulatus.jpg"
+                 alt="Ornate cow tick (Dermacentor reticulatus)"
+                 class="species-image"
+                 loading="lazy" />
+            <p></p>
+        </article>
+
+        <article class="species-entry">
+            <h3>Red sheep tick</h3>
+            <p class="species-latin"><em>Haemaphysalis punctata</em></p>
+            <p>
+                Mainly found in south-east England, with records also
+                from south Wales. It commonly feeds on sheep,
+                although it can also bite people.
+            </p>
+            <img src="~/images/ticks/haemaphysalis-punctata.jpeg"
+                 alt="Red sheep tick (Haemaphysalis punctata)"
+                 class="species-image"
+                 loading="lazy" />
+            <p></p>
+        </article>
+
+        <article class="species-entry">
+            <h3>Seabird tick</h3>
+            <p class="species-latin"><em>Ixodes uriae</em></p>
+            <p>
+                Associated with seabirds around the UK coast,
+                from Shetland to Cornwall. It can also feed on people.
+            </p>
+            <img src="~/images/ticks/ixodes-uriae.jpg"
+                 alt="Seabird tick (Ixodes uriae)"
+                 class="species-image"
+                 loading="lazy" />
+            <p></p>
+        </article>
+
+        <p>
+            Unsure which species you spotted? Enter “Unknown” when
+            reporting. These examples are not a complete identification guide.
+        </p>
+
+        <p>
+            Source:
+            <a href="https://www.gov.uk/guidance/tick-species-profiles">
+                UKHSA tick species profiles
+            </a>.
+        </p>
+    </section>
+
+    <section id="bite-prevention" class="about-section">
+        <h2>Tick bite prevention</h2>
+
+        <p>
+            A few precautions can help reduce the chance of a bite
+            when spending time outdoors:
+        </p>
+
+        <ul class="prevention-list">
+            <li>
+                Wear clothing that covers your skin and tuck
+                trousers into socks.
+            </li>
+            <li>
+                Choose light clothing to make crawling ticks
+                easier to notice.
+            </li>
+            <li>
+                Keep to clear paths where possible.
+            </li>
+            <li>
+                Use an appropriate insect repellent, following
+                its instructions.
+            </li>
+            <li>
+                Check your skin and clothing after outdoor activities.
+                Check children and pets too.
+            </li>
+        </ul>
+
+        <h3>If you find an attached tick</h3>
+
+        <p>
+            Remove it promptly. With fine-tipped tweezers,
+            grip close to the skin and pull slowly upwards,
+            avoiding squeezing its body.
+            Afterwards, wash the area with soap and water
+            or use antiseptic.
+        </p>
+
+        <p>
+            If you develop a spreading rash or feel unwell after
+            a tick bite or possible exposure, contact your GP
+            and mention the exposure.
+        </p>
+
+        <p>
+            Read the
+            <a href="https://www.nhs.uk/conditions/lyme-disease/">
+                NHS guidance on Lyme disease and tick removal
+            </a>.
+        </p>
+    </section>
+
+    <section id="seasonal-activity" class="about-section">
+        <h2>Seasonal tick activity</h2>
+
+        <p>
+            View monthly reported sightings for a city and year.
+            These educational records do not measure tick populations
+            or the risk of being bitten.
+        </p>
+
+        <div class="chart-filters">
+            <div>
+                <label for="chartCity" class="form-label">City</label>
+                <select id="chartCity" class="form-select" disabled></select>
+            </div>
+
+            <div>
+                <label for="chartYear" class="form-label">Year</label>
+                <select id="chartYear" class="form-select" disabled></select>
+            </div>
+        </div>
+
+        <p id="chartStatus" role="status">Loading sightings…</p>
+
+        <div id="seasonalChart" hidden>
+            <h3 id="chartTitle"></h3>
+
+            <table class="activity-chart">
+                <caption class="visually-hidden">
+                    Monthly reported tick sighting totals
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Month</th>
+                        <th scope="col">Reported sightings</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="chartRows"></tbody>
+            </table>
+        </div>
+
+        <p class="text-muted mt-3">
+            Source: Elanco student task API.
+        </p>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            const citySelect = document.getElementById("chartCity");
+            const yearSelect = document.getElementById("chartYear");
+            const status = document.getElementById("chartStatus");
+            const chart = document.getElementById("seasonalChart");
+            const title = document.getElementById("chartTitle");
+            const rows = document.getElementById("chartRows");
+
+            const months = [
+                "January", "February", "March", "April",
+                "May", "June", "July", "August",
+                "September", "October", "November", "December"
+            ];
+
+            let sightings = [];
+
+            function updateChart() {
+                const city = citySelect.value;
+                const year = Number(yearSelect.value);
+                const totals = new Array(12).fill(0);
+
+                sightings.forEach(function (sighting) {
+                    if (sighting.location === city &&
+                        sighting.year === year) {
+                        totals[sighting.month - 1]++;
+                    }
+                });
+
+                const maximum = Math.max(...totals, 1);
+                const total = totals.reduce((sum, count) => sum + count, 0);
+
+                title.textContent =
+                    "Reported tick sightings — " + city + ", " + year;
+
+                rows.replaceChildren();
+
+                months.forEach(function (month, index) {
+                    const row = document.createElement("tr");
+
+                    const label = document.createElement("th");
+                    label.scope = "row";
+                    label.textContent = month;
+
+                    const barCell = document.createElement("td");
+                    const track = document.createElement("div");
+                    track.className = "activity-track";
+                    track.setAttribute("aria-hidden", "true");
+
+                    const bar = document.createElement("div");
+                    bar.className = "activity-bar";
+                    bar.style.width =
+                        (totals[index] / maximum * 100) + "%";
+
+                    track.appendChild(bar);
+                    barCell.appendChild(track);
+
+                    const count = document.createElement("td");
+                    count.textContent = totals[index];
+
+                    row.append(label, barCell, count);
+                    rows.appendChild(row);
+                });
+
+                status.textContent = total === 0
+                    ? "No sightings reported for this city and year."
+                    : total + " sightings reported for this city and year.";
+
+                chart.hidden = false;
+            }
+
+            try {
+                const response = await fetch(
+                    '@Url.Action("Data", "Sightings")'
+                );
+
+                if (response.status === 429) {
+                    throw new Error(
+                        "Too many requests. Please wait a minute and reload."
+                    );
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Sightings could not be loaded. Please try again later."
+                    );
+                }
+
+                const result = await response.json();
+                const data = result.sightings;
+
+                if (!Array.isArray(data)) {
+                    throw new Error("The API returned an unexpected response.");
+                }
+
+                sightings = data.flatMap(function (item) {
+                    const match = typeof item.date === "string"
+                        ? item.date.match(/^(\d{4})-(\d{2})-(\d{2})/)
+                        : null;
+
+                    if (!match ||
+                        typeof item.location !== "string" ||
+                        !item.location.trim()) {
+                        return [];
+                    }
+
+                    const month = Number(match[2]);
+
+                    if (month < 1 || month > 12) {
+                        return [];
+                    }
+
+                    return [{
+                        location: item.location,
+                        year: Number(match[1]),
+                        month: month
+                    }];
+                });
+
+                if (sightings.length === 0) {
+                    status.textContent = "No sightings are currently available.";
+                    return;
+                }
+
+                const cities = [...new Set(
+                    sightings.map(item => item.location)
+                )].sort();
+
+                const years = [...new Set(
+                    sightings.map(item => item.year)
+                )].sort((a, b) => b - a);
+
+                cities.forEach(function (city) {
+                    citySelect.add(new Option(city, city));
+                });
+
+                years.forEach(function (year) {
+                    yearSelect.add(new Option(year, year));
+                });
+
+                if (cities.includes("London")) {
+                    citySelect.value = "London";
+                }
+
+                citySelect.disabled = false;
+                yearSelect.disabled = false;
+
+                citySelect.addEventListener("change", updateChart);
+                yearSelect.addEventListener("change", updateChart);
+
+                updateChart();
+            }
+            catch (error) {
+                status.textContent = error instanceof TypeError
+                    ? "Unable to connect to the sightings API. Please try again later."
+                    : error.message;
+            }
+        });
+    </script>
+}

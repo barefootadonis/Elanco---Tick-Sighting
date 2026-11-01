@@ -1,0 +1,129 @@
+﻿@model Elanco___Tick_Sighting.Models.TickSighting
+
+@{
+    ViewData["Title"] = "Report a Tick Sighting";
+}
+
+<h1>Report a Tick Sighting</h1>
+<p>Share where and when you spotted a tick. Fields marked * are required.</p>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div class="alert alert-success" role="status">
+        @message
+    </div>
+}
+
+<form asp-controller="Sightings"
+      asp-action="Form"
+      method="post"
+      enctype="multipart/form-data"
+      novalidate>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3 field-short">
+        <label asp-for="SightingDate" class="form-label">Date *</label>
+        <input asp-for="SightingDate"
+               type="date"
+               max="@DateTime.Today.ToString("yyyy-MM-dd")"
+               class="form-control"
+               required />
+        <span asp-validation-for="SightingDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 field-medium">
+        <label asp-for="City" class="form-label">City or town *</label>
+        <input asp-for="City" class="form-control" required />
+        <span asp-validation-for="City" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 field-medium">
+        <label asp-for="Species" class="form-label">Species *</label>
+        <input asp-for="Species"
+               class="form-control"
+               placeholder="Enter species, or Unknown if unsure"
+               required />
+        <span asp-validation-for="Species" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 field-medium">
+        <label asp-for="LatinName" class="form-label">
+            Latin name (optional)
+        </label>
+        <input asp-for="LatinName" class="form-control" />
+        <span asp-validation-for="LatinName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 field-medium">
+        <label for="image" class="form-label">Image (optional)</label>
+        <input type="file"
+               id="image"
+               name="image"
+               accept="image/jpeg,image/png"    
+               class="form-control" />
+        <div class="form-text">Choose a JPG or PNG image.</div>
+        @Html.ValidationMessage("image", null, new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3 field-wide">
+        <label asp-for="Description" class="form-label">
+            Additional details (optional)
+        </label>
+        <textarea asp-for="Description"
+                  class="form-control"
+                  rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">
+            Submit sighting
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const messages = {
+                SightingDate: "Please enter the sighting date.",
+                City: "Please enter a city or town.",
+                Species: "Enter a species, or Unknown if unsure."
+            };
+
+            Object.entries(messages).forEach(function ([name, message]) {
+                const input = document.getElementById(name);
+                const error = document.querySelector(
+                    '[data-valmsg-for="' + name + '"]'
+                );
+
+                if (!input || !error) {
+                    return;
+                }
+
+                // Inline messages start empty, including after submission.
+                error.textContent = "";
+                error.classList.remove("field-validation-error");
+                error.classList.add("field-validation-valid");
+
+                input.addEventListener("blur", function () {
+                    const empty = input.value.trim() === "";
+
+                    error.textContent = empty ? message : "";
+                    error.classList.toggle("field-validation-error", empty);
+                    error.classList.toggle("field-validation-valid", !empty);
+
+                    input.setAttribute("aria-invalid", String(empty));
+                });
+
+                input.addEventListener("input", function () {
+                    error.textContent = "";
+                    error.classList.remove("field-validation-error");
+                    error.classList.add("field-validation-valid");
+                    input.removeAttribute("aria-invalid");
+                });
+            });
+        });
+    </script>
+}

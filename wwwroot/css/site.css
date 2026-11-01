@@ -1,0 +1,312 @@
+:root {
+    --background: #ffffff;
+    --text: #202830;
+    --primary: #42a5f5;
+    --border: #aebbc5;
+}
+
+html {
+    font-size: 16px;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+main {
+    padding: 2rem 0 4rem;
+}
+
+h1 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+}
+
+    h1::after {
+        content: "";
+        display: block;
+        width: 65px;
+        height: 4px;
+        margin-top: 0.75rem;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+
+.navbar {
+    padding: 1rem 0;
+    background-color: var(--primary);
+    border-bottom: none !important;
+}
+
+    .navbar-brand,
+    .navbar .nav-link {
+        color: #102a43 !important;
+    }
+
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.navbar .nav-link {
+    font-weight: 600;
+}
+
+    .navbar .nav-link:hover {
+        text-decoration: underline;
+        text-underline-offset: 5px;
+    }
+
+.navbar-toggler {
+    border-color: var(--primary);
+}
+
+form {
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 2rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-control {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+textarea.form-control {
+    min-height: 120px;
+}
+
+.field-short,
+.field-medium,
+.field-wide {
+    max-width: 100%;
+}
+
+.field-short {
+    width: 280px;
+}
+
+.field-medium {
+    width: 500px;
+}
+
+.field-wide {
+    width: 680px;
+}
+
+.btn-primary {
+    --bs-btn-color: #102a43;
+    --bs-btn-bg: var(--primary);
+    --bs-btn-border-color: var(--primary);
+    --bs-btn-hover-color: #102a43;
+    --bs-btn-hover-bg: #3599e8;
+    --bs-btn-hover-border-color: #3599e8;
+    --bs-btn-active-color: #102a43;
+    --bs-btn-active-bg: #3599e8;
+    --bs-btn-active-border-color: #3599e8;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+}
+
+.btn:focus-visible,
+.form-control:focus,
+.navbar-toggler:focus-visible {
+    outline: 3px solid #1769aa;
+    outline-offset: 3px;
+    box-shadow: none;
+}
+
+.text-danger {
+    color: #a32020 !important;
+}
+
+.footer {
+    position: static !important;
+    padding: 1rem 0;
+    background: var(--background);
+}
+
+.about-ticks {
+    max-width: 1000px;
+}
+
+    .about-ticks > p {
+        margin-top: 1rem;
+    }
+
+.about-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 1.5rem 0 2rem;
+}
+
+    .about-links a {
+        color: #1769aa;
+        font-weight: 600;
+        text-underline-offset: 4px;
+    }
+
+        .about-links a:hover {
+            color: #102a43;
+        }
+
+        .about-links a:focus-visible {
+            outline: 3px solid #1769aa;
+            outline-offset: 4px;
+        }
+
+.about-section {
+    padding: 2rem 0;
+    border-top: 1px solid var(--border);
+    scroll-margin-top: 1rem;
+}
+
+    .about-section h2 {
+        margin-bottom: 1rem;
+        font-size: 1.6rem;
+    }
+
+.species-image {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin-top: 1rem;
+    border-radius: 6px;
+}
+
+.chart-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+    .chart-filters > div {
+        width: 220px;
+        max-width: 100%;
+    }
+
+.activity-chart {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+}
+
+    .activity-chart th,
+    .activity-chart td {
+        padding: 0.6rem 0.4rem;
+        text-align: left;
+    }
+
+    .activity-chart tbody th {
+        width: 100px;
+        font-weight: 400;
+    }
+
+    .activity-chart td:last-child {
+        width: 55px;
+        text-align: right;
+    }
+
+.activity-track {
+    height: 22px;
+    overflow: hidden;
+    background: #eef7fe;
+    border-radius: 3px;
+}
+
+.activity-bar {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 3px;
+}
+
+@media (max-width: 600px) {
+    main {
+        padding-top: 1rem;
+    }
+
+    .field-short,
+    .field-medium,
+    .field-wide,
+    .chart-filters > div,
+    button[type="submit"] {
+        width: 100%;
+    }
+
+    .about-section {
+        padding: 1.5rem 0;
+    }
+
+    .activity-chart th,
+    .activity-chart td {
+        padding: 0.5rem 0.2rem;
+        font-size: 0.85rem;
+    }
+}
+
+.sightings-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: 1.5rem;
+    margin: 1.5rem 0 2rem;
+}
+
+#sightingsMap {
+    height: 550px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.sighting-panel {
+    padding: 1.5rem;
+    background: #eef7fe;
+    border-radius: 6px;
+    overflow-wrap: anywhere;
+}
+
+    .sighting-panel h2 {
+        margin-bottom: 1rem;
+        font-size: 1.4rem;
+    }
+
+@media (max-width: 768px) {
+    .sightings-layout {
+        grid-template-columns: 1fr;
+    }
+
+    #sightingsMap {
+        height: 400px;
+    }
+}
+
+.timeline-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+    .timeline-scroll:focus-visible {
+        outline: 3px solid #1769aa;
+        outline-offset: 3px;
+    }
