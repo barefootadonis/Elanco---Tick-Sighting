@@ -1,7 +1,7 @@
 ﻿# Tick Tracker
 
 **Developed by Adesuwa Nosa-Ogie**  
-Elanco Placement Program — Full Stack Technical Task
+Elanco Placement Program - Full Stack Technical Task
 
 ## Overview
 
