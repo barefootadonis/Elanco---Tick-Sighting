@@ -246,4 +246,4 @@ The interface uses white and blue (`#42a5f5`) consistently, with responsive layo
 
 ## Video Walkthrough
 
-[Add your video link here, or the path to the video in this repository.]
+The video walkthrough demonstrates the main features of the application, including reporting a sighting, viewing the map, and filtering sightings. It can be found in the repository under the file name Video presentation.mp4.
